@@ -1565,6 +1565,11 @@ class CommandDispatcher:
             else:
                 if input_state.operator == command.operator: # Line wise operation
                     operator_args.line_wise = true
+                    # Linewise change only changes from first non-whitespace to end of line
+					if command.get("operator") == "change":
+						ed.select(start.line, ed.find_first_non_white_space_character(start.line), start.line, ed.last_column() + 1)
+						process_operator(command.operator, operator_args, ed, vim)
+						return true
                     var new_pos : Position = process_motion("expand_to_line", {}, ed, vim)
                     if new_pos.compares_to(start) > 0:
                         ed.select(start.line, 0, new_pos.line + 1, 0)
